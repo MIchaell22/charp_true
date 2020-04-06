@@ -1,0 +1,107 @@
+create database Flights
+go
+use Flights
+go
+CREATE TABLE Passengers (
+    ID_departure int NOT NULL PRIMARY KEY ,
+    ID_passenger int NOT NULL ,
+    Service_class  char(20)NOT NULL,
+    Passenger_lastname char(20)NOT NULL,
+    Passenger_name char(20)NOT NULL,
+		
+)
+GO
+
+
+CREATE TABLE Flights( 
+      Flight_number int NOT NULL PRIMARY KEY,
+      Froms char(30)NOT NULL ,
+      Wheres char(30) NOT NULL,
+      Airlines char(30) NOT NULL,
+      Length_km int NOT NULL ,
+      Time_in_path time ,
+      Aircraft_type char(30) NOT NULL,
+     
+ 
+	
+) 
+GO
+CREATE TABLE Flight_schedule ( 
+      ID_departure int NOT NULL,
+      Flight_number int NOT NULL ,
+      Departure_date date NOT NULL,
+      Departure_time time NOT NULL,
+      Departure_number int NOT NULL,
+	FOREIGN KEY (ID_departure)  REFERENCES Passengers (ID_departure) ON DELETE CASCADE,
+	FOREIGN KEY (Flight_number)  REFERENCES Flights (Flight_number) ON DELETE CASCADE
+	 )
+	 GO
+---Пассажиры------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
+insert into Passengers values(1,1,'I','Цинтар','Михайло')
+insert into Passengers values(2,2,'II','Петров','Іван')
+insert into Passengers values(3,3,'I','Слободян','Олександр')
+
+
+go
+
+                                                                                                                                                                                                                                                                    
+----Рейсы------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ 
+insert into Flights values(1,'Київ','Мадрид','Wizzair',4000,'4:00','Boing')
+insert into Flights values(2,'Київ','Бухарест','Wizzair',1000,'1:30','Boing')
+insert into Flights values(3,'Київ','Милан','Wizzair',2000,'2:30','Boing')
+
+go               
+
+----Расписание_вылетов------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ 
+insert into Flight_schedule values(1,1,'18.02.2020','20:00',1)
+insert into Flight_schedule values(2,2,'18.02.2020','20:30',2)
+insert into Flight_schedule values(3,3,'18.02.2020','21:00',3)
+
+go
+-----------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE AddPassengers
+    @ID_departure int  ,
+    @ID_passenger int ,
+    @Service_class  char(20),
+    @Passenger_lastname char(20),
+    @Passenger_name char(20)
+AS
+INSERT INTO Passengers VALUES(@ID_departure, @ID_passenger , @Service_class , @Passenger_lastname, @Passenger_name)
+GO  
+--------------------------------------------------------------------------------------------------    
+CREATE PROCEDURE DellPassengers
+@ID INT
+AS
+	DELETE FROM Passengers
+	where @ID = ID_departure
+	
+GO 
+-----------------------------------------------------------------------------
+
+CREATE PROCEDURE UpdatePassengers
+@ReturnCode char,
+	@New_Passenger_lastname CHAR(20),
+	@Old_Passenger_lastname CHAR(20)
+AS
+BEGIN
+UPDATE Passengers
+SET Passenger_lastname = @New_Passenger_lastname
+WHERE Passenger_lastname = @Old_Passenger_lastname
+Set @ReturnCode ='c200'
+END
+go
+--------------------------------------------------------------
+CREATE PROCEDURE SelectID_departure
+@ID int
+
+as
+
+Select* FROM Passengers
+where @ID=ID_departure
+
+go
+
+CREATE PROCEDURE GetAllPassengers
+as
+Select* From Passengers
+go
